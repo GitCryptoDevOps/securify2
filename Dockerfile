@@ -44,6 +44,7 @@ ENV PYTHONPATH /sec
 
 # install securify requirements
 RUN python3.7 setup.py install && python3.7 -m pip install --user -r /requirements.txt && python3.7 -m pip install requests
+RUN python3.7 -m pip install solc-select
 
 RUN cd /sec/securify/staticanalysis/libfunctors/ && ./compile_functors.sh
 
@@ -60,4 +61,9 @@ ENV LD_LIBRARY_PATH /sec/securify/staticanalysis/libfunctors
 # Should be removed
 RUN cd /sec/securify/ && securify staticanalysis/testContract.sol
 
-ENTRYPOINT ["python3.7", "securify/__main__.py"]
+COPY ./install-solc.sh .
+RUN ./install-solc.sh
+COPY ./securify.sh /usr/local/bin/securify
+
+#ENTRYPOINT ["python3.7", "securify/__main__.py"]
+
